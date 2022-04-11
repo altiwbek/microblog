@@ -74,4 +74,31 @@ RSpec.describe "Posts", type: :request do
       expect(response).to be_successful
     end
   end
+
+  describe "POST /user_like" do
+    let(:post_) { create(:post) }
+    let(:req) { post user_like_post_url(id: post_.id, format: :js) }
+    let(:user) { create(:user) }
+
+    before { login_as user }
+    it "creates like successfully" do
+      req
+
+      expect(response).to be_successful
+    end
+  end
+
+  describe "POST /user_un_like" do
+    let(:post) { create(:post) }
+    let(:user) { create(:user) }
+    let(:post_user_like) { create(:post_user_like, user: user, post: post) }
+    let(:req) { delete user_un_like_post_url(id: post.id, format: :js) }
+
+    before { login_as user }
+    it "destroys like successfully" do
+      req
+
+      expect(response).to be_successful
+    end
+  end
 end
