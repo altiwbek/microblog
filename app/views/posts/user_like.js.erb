@@ -1,0 +1,7 @@
+if(typeof post !== undefined) {
+  post = document.getElementById("like-post-<%= @post.id %>")
+} else {
+  let post = document.getElementById("like-post-<%= @post.id %>")
+}
+
+post.innerHTML = "<%= escape_javascript(render partial: 'liked', locals: { post: @post } ) %>"

@@ -20,6 +20,7 @@
 #
 class User < ApplicationRecord
   has_many :posts, dependent: :destroy
+  has_many :post_user_likes
 
   validates :first_name, presence: true
   validates :last_name, presence: true

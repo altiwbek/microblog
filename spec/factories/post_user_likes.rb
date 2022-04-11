@@ -1,29 +1,27 @@
-class Post < ApplicationRecord
-  belongs_to :user
-  has_many :post_user_likes
-
-  validates :body, presence: true
-
-  def liked_by?(user)
-    post_user_likes.where(user: user).first.present?
+FactoryBot.define do
+  factory :post_user_like do
+    user { nil }
+    post { nil }
   end
 end
 
 # == Schema Information
 #
-# Table name: posts
+# Table name: post_user_likes
 #
 #  id         :bigint           not null, primary key
-#  body       :text
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  post_id    :bigint           not null
 #  user_id    :bigint           not null
 #
 # Indexes
 #
-#  index_posts_on_user_id  (user_id)
+#  index_post_user_likes_on_post_id  (post_id)
+#  index_post_user_likes_on_user_id  (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (post_id => posts.id)
 #  fk_rails_...  (user_id => users.id)
 #
