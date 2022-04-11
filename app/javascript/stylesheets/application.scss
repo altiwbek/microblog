@@ -16,6 +16,10 @@
   label {
     @apply font-bold lowercase;
   }
+
+  .like-svg {
+    @apply w-7 h-7;
+  }
 }
 
 @layer components {
