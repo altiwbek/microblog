@@ -18,15 +18,14 @@ class Post < ApplicationRecord
     post_user_likes.count
   end
 
-  def self.select_with_likes_count(user_id)
-    left_joins(:post_user_likes)
-      .select( Arel.sql(
-      "posts.*, ("\
-             "SELECT COUNT(*) FROM post_user_likes "\
+  def self.select_with_likes_count(user_id = nil)
+    raw_sql = "posts.*, "
+    raw_sql << "(SELECT COUNT(*) FROM post_user_likes "\
              "WHERE post_user_likes.post_id = posts.id AND post_user_likes.user_id = #{user_id}"\
-             ") AS user_like_count, "\
-             "count(post_user_likes.id) as post_user_likes_count"
-      )).group(:id)
+             ") AS user_like_count, " if user_id.present?
+    raw_sql << "count(post_user_likes.id) as post_user_likes_count"
+
+    left_joins(:post_user_likes).select(Arel.sql(raw_sql)).group(:id)
   end
 end
 
