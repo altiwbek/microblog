@@ -1,7 +1,2 @@
-if(typeof post !== undefined) {
-  post = document.getElementById("like-post-<%= @post.id %>")
-} else {
-  let post = document.getElementById("like-post-<%= @post.id %>")
-}
-
-post.innerHTML = "<%= escape_javascript(render partial: 'like', locals: { post: @post } ) %>"
+document.getElementById("like-post-<%= @post.id %>").innerHTML = "<%= escape_javascript(render partial: 'like', locals: { post: @post } ) %>"
+document.getElementById("users_likes_total_count_<%= @post.id %>").innerHTML = "<%= escape_javascript( @post.users_likes_total_count ) %>"

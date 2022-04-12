@@ -12,13 +12,21 @@ class Post < ApplicationRecord
     post_user_likes.where(user: user).first.present?
   end
 
-  def self.select_with_likes_of(user_id)
-    select( Arel.sql(
+  def users_likes_total_count
+    return try(:post_user_likes_count) if respond_to?(:post_user_likes_count)
+
+    post_user_likes.count
+  end
+
+  def self.select_with_likes_count(user_id)
+    left_joins(:post_user_likes)
+      .select( Arel.sql(
       "posts.*, ("\
              "SELECT COUNT(*) FROM post_user_likes "\
-             "WHERE post_user_likes.post_id = posts.id and post_user_likes.user_id = #{user_id}"\
-             ") as user_like_count"
-    ))
+             "WHERE post_user_likes.post_id = posts.id AND post_user_likes.user_id = #{user_id}"\
+             ") AS user_like_count, "\
+             "count(post_user_likes.id) as post_user_likes_count"
+      )).group(:id)
   end
 end
 
