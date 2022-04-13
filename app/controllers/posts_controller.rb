@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :user_like]
+  before_action :authenticate_user!, only: [:create, :user_like, :user_un_like]
   def index
-    @posts = Post.includes(:user, :post_user_likes)
+    @posts = Post.includes(:user)
                  .select_with_likes_count(current_user&.id)
                  .order(created_at: :desc)
   end

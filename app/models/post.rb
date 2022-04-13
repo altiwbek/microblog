@@ -4,6 +4,15 @@ class Post < ApplicationRecord
 
   validates :body, presence: true
 
+  scope :select_with_likes_count, ->(user_id = nil) {
+    raw_sql = "posts.*, "
+    raw_sql << "COUNT(DISTINCT CASE WHEN post_user_likes.user_id = #{user_id} "\
+                  "THEN post_user_likes.id END) AS user_like_count, " if user_id.present?
+    raw_sql << "COUNT(post_user_likes.id) AS post_user_likes_count"
+
+    left_joins(:post_user_likes).select(Arel.sql(raw_sql)).group(:id)
+  }
+
   def liked_by?(user)
     if respond_to? :user_like_count
       return try(:user_like_count).to_i > 0?  true : false
@@ -18,15 +27,14 @@ class Post < ApplicationRecord
     post_user_likes.count
   end
 
-  def self.select_with_likes_count(user_id = nil)
-    raw_sql = "posts.*, "
-    raw_sql << "(SELECT COUNT(*) FROM post_user_likes "\
-             "WHERE post_user_likes.post_id = posts.id AND post_user_likes.user_id = #{user_id}"\
-             ") AS user_like_count, " if user_id.present?
-    raw_sql << "count(post_user_likes.id) as post_user_likes_count"
-
-    left_joins(:post_user_likes).select(Arel.sql(raw_sql)).group(:id)
-  end
+  # def self.select_with_likes_count(user_id = nil)
+  #   raw_sql = "posts.*, "
+  #   raw_sql << "COUNT(DISTINCT CASE WHEN post_user_likes.user_id = #{user_id} "\
+  #                 "THEN post_user_likes.id END) AS user_like_count, " if user_id.present?
+  #   raw_sql << "COUNT(post_user_likes.id) AS post_user_likes_count"
+  #
+  #   left_joins(:post_user_likes).select(Arel.sql(raw_sql)).group(:id)
+  # end
 end
 
 # == Schema Information
